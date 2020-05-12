@@ -1,5 +1,5 @@
 class Board
-    attr_accessor :grid, :marker
+    attr_accessor :grid
     def initialize
         @grid = [
             [" ", " ", " "],
@@ -15,11 +15,13 @@ class Board
     end
 
     def show
+        puts ""
         puts (@grid[0][0].to_s + ' | ' + @grid[0][1].to_s + ' | ' + @grid[0][2].to_s)
         puts '- - - - -'
         puts (@grid[1][0].to_s + ' | ' + @grid[1][1].to_s + ' | ' + @grid[1][2].to_s)
         puts '- - - - -'
         puts (@grid[2][0].to_s + ' | ' + @grid[2][1].to_s + ' | ' + @grid[2][2].to_s)
+        puts ""
     end
 
     def invalid_entry?(entry)
@@ -44,8 +46,8 @@ class Board
 end
 
 class Player
-    attr_reader :marker, :temp_name
-    attr_accessor :name
+    attr_reader :temp_name
+    attr_accessor :name, :marker
     def initialize(temp_name)
         @temp_name = temp_name
         @score = 0
@@ -79,7 +81,7 @@ class TicTacToe
         @board = Board.new
         @player1 = Player.new("Player1")
         @player2 = Player.new("Player2")
-        @game_active = true;
+        @game_active = true
     end
 
     public
@@ -90,13 +92,13 @@ class TicTacToe
         @player1.get_marker
         @player2.get_name
         @player2.get_marker
-            while @player2.marker == @player1.marker
-                print "Hey, that's #{@player1.name}'s marker! Please choose a different one: '"
-                @player2.marker = gets.chomp
-            end
+        while @player2.marker == @player1.marker
+            print "Hey, that's #{@player1.name}'s marker! Please choose a different one: '"
+            @player2.marker = gets.chomp
+        end
         @board.show
-        while @game_active
-            play_round()
+        loop do
+          play_round()
         end
     end
 
@@ -104,7 +106,6 @@ class TicTacToe
     
     def play_round
         take_turn(@player1)
-        check_winner(@player1)
         check_winner(@player1)
         take_turn(@player2)
         check_winner(@player2)
@@ -149,7 +150,7 @@ class TicTacToe
             play
         else
             puts "Thanks for playing!"
-            @game_active = false
+            exit
         end
     end
 
@@ -176,14 +177,15 @@ class TicTacToe
         @player1.marker = nil
         @player2.name = nil
         @player2.marker = nil
+        @winner = false
     end
 
     def check_across(marker)
-        @board.grid.each do |row|
-            if [row[0], row[1], row[2]].all?(marker)
-                return true
-            end
+      @board.grid.each do |row|
+        if [row[0], row[1], row[2]].all?(marker)
+            return true
         end
+    end
         false
     end
 
@@ -198,9 +200,9 @@ class TicTacToe
 
     def check_diagonal(marker)
         grid = @board.grid
-        if [grid[0][0], grid[1][4], grid[2][8]].all?(marker)
+        if [grid[0][0], grid[1][1], grid[2][2]].all?(marker)
             true
-        elsif [grid[0][2], grid[1][4], grid[2][0]].all?(marker)
+        elsif [grid[0][2], grid[1][1], grid[2][0]].all?(marker)
             true
         else
             false
